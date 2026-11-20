@@ -26,6 +26,23 @@ Flag clear Ruby-specific bugs or rewrites that make the intent easier to read. P
 - **Equality:** Use `==` for value equality and `equal?` for identity. Don't swap them without checking intent.
 - **Blocks:** Ruby's `yield` calls the block passed to the method; it doesn't make the method a generator. Prefer `yield` over capturing `&block` just to call it when block handling stays the same.
 
+## Readable brevity
+
+Prefer the shortest form that makes intent obvious. Don't enforce line counts.
+
+- **Collapse simple code:** `return unless order.paid?` instead of nesting the rest of the method; `items.each { |item| enqueue(item) }` for a one-action block.
+- **Expand dense code:** Instead of `order.paid? ? (order.shipped? ? :shipped : :ready) : :pending`, use a guard followed by a simple choice:
+
+  ```ruby
+  return :pending unless order.paid?
+
+  order.shipped? ? :shipped : :ready
+  ```
+
+- **Name the decision:** Use a local like `free_shipping = member? && subtotal >= minimum` if it clarifies a condition. Don't extract a helper just to shorten a line.
+
+Style references: [Ruby Style Guide](https://rubystyle.guide/#flow-of-control), [Shopify](https://shopify.github.io/ruby-style-guide/#general), [99 Bottles of OOP](https://www.sandimetz.com/99bottles-sample-ruby#section-c1-simplifying-code), [Ruby Science](https://thoughtbot.com/ruby-science/introduce-explaining-variable.html).
+
 Report the highest-value findings, one per line: `path:line — issue → suggested rewrite`. If none, return `No Ruby idiom issues found.` If the patch is missing or visibly incomplete, say so rather than reporting a clean review.
 
 Sources: [Ruby Quickstart](https://www.ruby-lang.org/en/documentation/quickstart/) ([2](https://www.ruby-lang.org/en/documentation/quickstart/2/), [3](https://www.ruby-lang.org/en/documentation/quickstart/3/), [4](https://www.ruby-lang.org/en/documentation/quickstart/4/)); [Ruby From Other Languages](https://www.ruby-lang.org/en/documentation/ruby-from-other-languages/) ([C/C++](https://www.ruby-lang.org/en/documentation/ruby-from-other-languages/to-ruby-from-c-and-cpp/), [Java](https://www.ruby-lang.org/en/documentation/ruby-from-other-languages/to-ruby-from-java/), [Python](https://www.ruby-lang.org/en/documentation/ruby-from-other-languages/to-ruby-from-python/)).
